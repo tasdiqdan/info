@@ -15,7 +15,7 @@
         "pin": "7085",
         "category": "category2",
         "expiry": "2025-03-27",
-        "status": "not"
+        "status": "error"
     },
     {
         "pin": "2096",
