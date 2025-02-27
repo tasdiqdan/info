@@ -8,32 +8,24 @@
     <link rel="stylesheet" href="style.css"> <!-- Dizayn fayli -->
 </head>
 <body>
-    <header>
-        <h1>Shifokorlar Uchun Test</h1>
-        <nav>
-            <ul>
-                <li><a href="#">Bosh sahifa</a></li>
-                <li><a href="#">Kategoriyalar</a></li>
-                <li><a href="#">Bog‘lanish</a></li>
-            </ul>
-        </nav>
-    </header>
-    
     <div class="container">
-        <h2>Hamshiralar bo‘limi</h2>
+        <h2>Shifokorlar bo‘limi</h2>
         <p>Mutaxassisligingizni tanlang</p>
-        <div>
-            <button class="btn" onclick="selectCategory(this, 'Gematologiya')">Gematologiya</button>
-            <button class="btn" onclick="selectCategory(this, 'Hamshiralik ishi')">Hamshiralik ishi</button>
-            <button class="btn" onclick="selectCategory(this, 'Patronajlik ishi')">Patronajlik ishi</button>
+        <div class="category-container">
+            <button class="btn" onclick="selectCategory(this, 'Gematologiya.pdf')">Gemotologiya</button>
+            <button class="btn" onclick="selectCategory(this, 'Rentgenologiya')">Rentgenologiya</button>
+            <button class="btn" onclick="selectCategory(this, 'Dezinfektologiya')">Dezinfektologiya</button>
+            <button class="btn" onclick="selectCategory(this, 'Bolalar nevrologiyasi')">Bolalar nevrologiyasi</button>
+            <button class="btn" onclick="selectCategory(this, 'Akusherlik va Ginekologiya')">Akusherlik va Ginekologiya</button>
+            <button class="btn" onclick="selectCategory(this, 'Bolalar kardiologiyasi va revmatologiyasi')">Bolalar kardiologiyasi va revmatologiyasi</button>
         </div>
         <p>Savollar soni</p>
-        <div>
-            <button class="btn" onclick="selectQuestionCount(this, 5)">5</button>
-            <button class="btn" onclick="selectQuestionCount(this, 10)">10</button>
+        <div class="question-count">
             <button class="btn" onclick="selectQuestionCount(this, 15)">15</button>
-            <button class="btn" onclick="selectQuestionCount(this, 20)">20</button>
             <button class="btn" onclick="selectQuestionCount(this, 25)">25</button>
+            <button class="btn" onclick="selectQuestionCount(this, 35)">35</button>
+            <button class="btn" onclick="selectQuestionCount(this, 45)">45</button>
+            <button class="btn" onclick="selectQuestionCount(this, 50)">50</button>
         </div>
         <button class="start-btn" onclick="startQuiz()">Testni boshlash</button>
     </div>
@@ -43,8 +35,6 @@
         let selectedQuestionCount = 10;
         let questions = [];
         let currentQuestionIndex = 0;
-        let correctAnswers = 0;
-        let userResults = [];
 
         function selectCategory(element, category) {
             document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('selected'));
@@ -71,16 +61,15 @@
 
         async function loadQuestionsFromGithub() {
             const pdfUrls = [
-                "https://raw.githack.com/tasdiqdan/info/main/gematologiya.pdf",
+                "https://raw.githack.com/tasdiqdan/info/main/Gemotologiya.pdf",
                 "https://raw.githack.com/tasdiqdan/info/main/test2.pdf"
-            ]; // Shu yerga PDF fayllaringizni qo‘shing
-            
+            ];
             let allText = "";
             for (let url of pdfUrls) {
                 allText += await loadPDF(url) + " ";
             }
             extractQuestions(allText);
-            startQuiz();
+            startQuizProcess();
         }
 
         function extractQuestions(text) {
@@ -97,8 +86,7 @@
                 ];
                 allQuestions.push({ question: match[1], answers: shuffleArray(answers) });
             }
-            
-            questions = shuffleArray(allQuestions).slice(0, selectedQuestionCount); // Tanlangan savollar soni
+            questions = shuffleArray(allQuestions).slice(0, selectedQuestionCount);
         }
 
         function startQuiz() {
