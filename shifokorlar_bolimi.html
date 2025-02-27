@@ -12,7 +12,7 @@
         <h2>Shifokorlar bo‘limi</h2>
         <p>Mutaxassisligingizni tanlang</p>
         <div class="category-container">
-            <button class="btn" onclick="selectCategory(this, 'Gematologiya.pdf')">Gemotologiya</button>
+            <button class="btn" onclick="selectCategory(this, 'Gemotologiya')">Gemotologiya</button>
             <button class="btn" onclick="selectCategory(this, 'Rentgenologiya')">Rentgenologiya</button>
             <button class="btn" onclick="selectCategory(this, 'Dezinfektologiya')">Dezinfektologiya</button>
             <button class="btn" onclick="selectCategory(this, 'Bolalar nevrologiyasi')">Bolalar nevrologiyasi</button>
@@ -36,6 +36,11 @@
         let questions = [];
         let currentQuestionIndex = 0;
 
+        const pdfUrls = [
+            "https://raw.githubusercontent.com/tasdiqdan/info/main/test1.pdf",
+            "https://raw.githubusercontent.com/tasdiqdan/info/main/test2.pdf"
+        ];
+
         function selectCategory(element, category) {
             document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('selected'));
             element.classList.add('selected');
@@ -49,24 +54,29 @@
         }
 
         async function loadPDF(url) {
-            const pdf = await pdfjsLib.getDocument(url).promise;
-            let text = "";
-            for (let i = 1; i <= pdf.numPages; i++) {
-                const page = await pdf.getPage(i);
-                const textContent = await page.getTextContent();
-                text += textContent.items.map(item => item.str).join(" ") + " ";
+            try {
+                const loadingTask = pdfjsLib.getDocument(url);
+                const pdf = await loadingTask.promise;
+                let text = "";
+
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const textContent = await page.getTextContent();
+                    text += textContent.items.map(item => item.str).join(" ") + " ";
+                }
+                return text;
+            } catch (error) {
+                console.error("PDF yuklashda xatolik:", error);
+                alert("PDF yuklashda xatolik! Iltimos, PDF fayl URL manzillari to‘g‘ri ekanini tekshiring.");
+                return "";
             }
-            return text;
         }
 
         async function loadQuestionsFromGithub() {
-            const pdfUrls = [
-                "https://raw.githack.com/tasdiqdan/info/main/Gemotologiya.pdf",
-                "https://raw.githack.com/tasdiqdan/info/main/test2.pdf"
-            ];
             let allText = "";
             for (let url of pdfUrls) {
-                allText += await loadPDF(url) + " ";
+                let text = await loadPDF(url);
+                allText += text + " ";
             }
             extractQuestions(allText);
             startQuizProcess();
